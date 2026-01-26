@@ -1,0 +1,38 @@
+# --- Virtual Environments ---
+venv/
+.venv/
+env/
+bin/
+lib/
+share/
+Include/
+pyvenv.cfg
+
+# --- Python / Django specific ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# --- Databases ---
+# We ignore the local SQLite DB to keep GitHub clean
+db.sqlite3
+db.sqlite3-journal
+
+# --- Environment Secrets ---
+# VERY IMPORTANT: This keeps your SECRET_KEY and DB credentials private
+.env
+
+# --- Media and Static ---
+# In production, these are handled differently
+/static/
+/media/
+
+# --- IDEs and OS specific ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
