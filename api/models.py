@@ -62,6 +62,8 @@ class Shipment(models.Model):
             calculated = calculate_distance(self.origin, self.destination)
             if calculated:
                 self.distance = calculated
+            else:
+                self.distance = 0
                 
         # Then do the carbon calculation
         self.carbon_footprint = float(self.distance) * float(self.weight) * float(self.vehicle.emission_factor)
