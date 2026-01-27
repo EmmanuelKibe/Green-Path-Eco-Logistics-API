@@ -33,7 +33,9 @@ class Shipment(models.Model):
     distance = models.DecimalField(
         max_digits=10, 
         decimal_places=2, 
-        validators=[MinValueValidator(0.1)]
+        validators=[MinValueValidator(0.1)],
+        null=True,
+        blank=True  
     )
     weight = models.DecimalField(
         max_digits=10, 
