@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 from django.core.validators import MinValueValidator
+from .services import calculate_distance
 
 class Vehicle(models.Model):
     """
@@ -54,10 +55,14 @@ class Shipment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        """
-        Overriding save to calculate carbon footprint before storing.
-        """
-        self.carbon_footprint = self.distance * self.weight * self.vehicle.emission_factor
+        # If distance isn't provided, calculate it automatically!
+        if not self.distance and self.origin and self.destination:
+            calculated = calculate_distance(self.origin, self.destination)
+            if calculated:
+                self.distance = calculated
+                
+        # Then do the carbon calculation
+        self.carbon_footprint = float(self.distance) * float(self.weight) * float(self.vehicle.emission_factor)
         super().save(*args, **kwargs)
 
     def __str__(self):
