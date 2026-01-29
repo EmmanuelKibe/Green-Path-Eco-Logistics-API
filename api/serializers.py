@@ -7,6 +7,7 @@ class VehicleSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ShipmentSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
     # We make these read-only because the backend calculates them
     distance = serializers.ReadOnlyField()
     carbon_footprint = serializers.ReadOnlyField()
@@ -15,5 +16,5 @@ class ShipmentSerializer(serializers.ModelSerializer):
         model = Shipment
         fields = [
             'id', 'origin', 'destination', 'weight', 
-            'vehicle', 'distance', 'carbon_footprint', 'created_at'
+            'vehicle', 'distance', 'carbon_footprint', 'owner', 'created_at'
         ]
