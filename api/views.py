@@ -2,6 +2,7 @@ from rest_framework import generics, filters, permissions
 from .models import Vehicle, Shipment
 from .serializers import VehicleSerializer, ShipmentSerializer
 from django_filters.rest_framework import DjangoFilterBackend
+from .permissions import IsOwnerOrReadOnly
 
 
 class VehicleList(generics.ListCreateAPIView):
@@ -30,3 +31,8 @@ class ShipmentList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         # Automatically set the owner to the current logged-in user
         serializer.save(owner=self.request.user)
+
+class ShipmentDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Shipment.objects.all()
+    serializer_class = ShipmentSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
