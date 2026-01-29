@@ -2,6 +2,7 @@ from django.db import models
 import uuid
 from django.core.validators import MinValueValidator
 from .services import calculate_distance
+from django.contrib.auth.models import User
 
 class Vehicle(models.Model):
     """
@@ -26,6 +27,13 @@ class Shipment(models.Model):
     Records shipment details and automatically calculates carbon footprint.
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(
+        User, 
+        related_name='shipments', 
+        on_delete=models.CASCADE,
+        null=True,  # Temporarily allow null for testing
+        blank=True
+    )
     origin = models.CharField(max_length=255)
     destination = models.CharField(max_length=255)
     
