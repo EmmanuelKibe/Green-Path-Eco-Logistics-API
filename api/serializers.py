@@ -22,7 +22,7 @@ class ShipmentSerializer(serializers.ModelSerializer):
     def validate_weight(self, value):
         #Check that the weight is a positive number.
         if value <= 0:
-            raise serializers.ValidationError("Weight must be greater than zero.")
+            raise serializers.ValidationError({"Weight must be greater than zero."})
         return value
 
     def validate(self, data):
