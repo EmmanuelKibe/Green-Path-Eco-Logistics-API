@@ -18,3 +18,17 @@ class ShipmentSerializer(serializers.ModelSerializer):
             'id', 'origin', 'destination', 'weight', 
             'vehicle', 'distance', 'carbon_footprint', 'owner', 'created_at'
         ]
+
+    def validate_weight(self, value):
+        #Check that the weight is a positive number.
+        if value <= 0:
+            raise serializers.ValidationError("Weight must be greater than zero.")
+        return value
+
+    def validate(self, data):
+        #Check that origin and destination are not the same.
+        if data['origin'].lower() == data['destination'].lower():
+            raise serializers.ValidationError({
+                "destination": "Origin and destination cannot be the same city."
+            })
+        return data
