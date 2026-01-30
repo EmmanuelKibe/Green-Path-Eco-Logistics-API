@@ -26,7 +26,7 @@ class ShipmentList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         # Users only see THEIR own shipments
-        return Shipment.objects.filter(owner=self.request.user)
+        return Shipment.objects.filter(owner=self.request.user).select_related('vehicle', 'owner')
 
     def perform_create(self, serializer):
         # Automatically set the owner to the current logged-in user
