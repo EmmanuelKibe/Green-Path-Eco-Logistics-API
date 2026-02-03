@@ -46,6 +46,8 @@ if render_host:
     ALLOWED_HOSTS.append(render_host)
 
 
+CSRF_TRUSTED_ORIGINS = ['https://green-path-eco-logistics-api-1.onrender.com']
+
 # Application definition
 
 INSTALLED_APPS = [
