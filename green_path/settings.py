@@ -11,14 +11,13 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-import environ
+from environ import Env
 import os
 import dj_database_url
 
-env = environ.Env(
-    # set casting, default value
-    DEBUG=(bool, False)
-)
+env = Env()
+# Read .env file
+Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Set the project base directory
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -40,13 +39,6 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=False)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'green-path-eco-logistics-api-1.onrender.com']
-
-render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if render_host:
-    ALLOWED_HOSTS.append(render_host)
-
-
-CSRF_TRUSTED_ORIGINS = ['https://green-path-eco-logistics-api-1.onrender.com']
 
 # Application definition
 
