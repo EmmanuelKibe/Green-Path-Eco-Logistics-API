@@ -1,8 +1,26 @@
 from rest_framework import generics, filters, permissions
 from .models import Vehicle, Shipment
-from .serializers import VehicleSerializer, ShipmentSerializer
+from .serializers import VehicleSerializer, ShipmentSerializer, RegisterSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from .permissions import IsOwnerOrReadOnly
+from rest_framework.response import Response
+from django.contrib.auth.models import User
+
+# Registration View
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (permissions.AllowAny,) # Anyone can sign up
+    serializer_class = RegisterSerializer
+
+# User Profile View 
+class UserProfileView(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request):
+        return Response({
+            "username": request.user.username,
+            "email": request.user.email
+        })
 
 
 class VehicleList(generics.ListCreateAPIView):
