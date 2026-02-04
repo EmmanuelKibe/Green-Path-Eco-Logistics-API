@@ -1,5 +1,9 @@
 from django.urls import path
 from .views import VehicleList, ShipmentList, ShipmentDetail, RegisterView, UserProfileView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('vehicles/', VehicleList.as_view(), name='vehicle-list'),
