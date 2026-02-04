@@ -3,6 +3,54 @@ import uuid
 from django.core.validators import MinValueValidator
 from .services import calculate_distance
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+class Company(models.Model):
+    name = models.CharField(max_length=255)
+    registration_number = models.CharField(
+        max_length=100, 
+        unique=True, 
+        editable=False
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.registration_number:
+            # Generates a prefix 'GP-' followed by a unique 8-character code
+            self.registration_number = f"GP-{uuid.uuid4().hex[:8].upper()}"
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name_plural = "Companies"
+
+    def __str__(self):
+        return f"{self.name} ({self.registration_number})"
+
+class Profile(models.Model):
+    ROLE_CHOICES = (
+        ('driver', 'Driver'),
+        ('manager', 'Manager'),
+        ('client', 'Client'),
+    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # Every user profile must point to a Company
+    company = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='client')
+    phone_number = models.CharField(max_length=15, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} ({self.role}) - {self.company.name if self.company else 'No Company'}"
+
+# Create or update user profile whenever User instance is created/updated
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
 
 class Vehicle(models.Model):
     """
@@ -26,6 +74,7 @@ class Shipment(models.Model):
     """
     Records shipment details and automatically calculates carbon footprint.
     """
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey(
         User, 
