@@ -3,7 +3,7 @@ from .models import Vehicle, Shipment
 from django.contrib.auth.models import User
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_password=True)
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
