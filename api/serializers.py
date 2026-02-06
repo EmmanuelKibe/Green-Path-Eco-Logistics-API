@@ -27,6 +27,7 @@ class ShipmentSerializer(serializers.ModelSerializer):
     # We make these read-only because the backend calculates them
     distance = serializers.ReadOnlyField()
     carbon_footprint = serializers.ReadOnlyField()
+    vehicle = serializers.PrimaryKeyRelatedField(queryset=Vehicle.objects.all())
 
     class Meta:
         model = Shipment

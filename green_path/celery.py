@@ -2,9 +2,9 @@ import os
 from celery import Celery
 
 # Set the default Django settings module
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'green_path_api.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'green_path.settings')
 
-app = Celery('green_path_api')
+app = Celery('green_path')
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.

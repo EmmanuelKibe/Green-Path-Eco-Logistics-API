@@ -114,17 +114,15 @@ class Shipment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        # If distance isn't provided, calculate it automatically!
-        if not self.distance and self.origin and self.destination:
-            calculated = calculate_distance(self.origin, self.destination)
-            if calculated:
-                self.distance = calculated
-            else:
-                self.distance = 0
-                
-        # Then do the carbon calculation
-        self.carbon_footprint = float(self.distance) * float(self.weight) * float(self.vehicle.emission_factor)
+        # Perform the standard save first
+        is_new = self._state.adding
         super().save(*args, **kwargs)
+        
+        if is_new or not self.carbon_footprint:
+            from .tasks import compute_shipment_metrics_task
+            # In Eager mode, this line executes the task immediately
+            compute_shipment_metrics_task(str(self.id))
+      
 
     def __str__(self):
         return f"Shipment {self.id} - {self.carbon_footprint}kg CO2"
